@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - master
+
+jobs:
+  release:
+    name: Tag and Release
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'release/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout merged code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      - name: Extract version from branch name
+        id: extract
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          VERSION="${BRANCH_NAME#release/}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Tag and create GitHub release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.extract.outputs.version }}
+          COMMIT_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+        run: |
+          gh release create "$VERSION" \
+            --target "$COMMIT_SHA" \
+            --title "$VERSION" \
+            --generate-notes
