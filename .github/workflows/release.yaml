@@ -24,7 +24,7 @@ jobs:
         id: extract
         run: |
           BRANCH_NAME="${{ github.head_ref }}"
-          VERSION="${BRANCH_NAME#release/}"
+          VERSION="v${BRANCH_NAME#release/}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Tag and create GitHub release
