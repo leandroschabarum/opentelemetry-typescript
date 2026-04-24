@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-      contents: read
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,6 +22,15 @@ jobs:
           VERSION="v${BRANCH_NAME#release/}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Ensure diff exists
+        run: |
+          if git diff --quiet origin/master; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git commit --allow-empty -m "Release ${{ steps.extract.outputs.version }}"
+            git push
+          fi
+
       - name: Create GitHub pull request
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -29,11 +38,11 @@ jobs:
         run: |
           exists=$(gh pr list --head "$GITHUB_REF_NAME" --base master --json number --jq '.[0].number')
           if [ -z "$exists" ]; then
-            gh api repos/${{ github.repository }}/pulls \
-              -f title="Release $VERSION" \
-              -f body="" \
-              -f base=master \
-              -f head="$GITHUB_REF_NAME"
+            gh pr create \
+              --title "Release $VERSION" \
+              --body "" \
+              --base master \
+              --head "$GITHUB_REF_NAME"
           else
             echo "PR #${exists} already exists"
           fi
