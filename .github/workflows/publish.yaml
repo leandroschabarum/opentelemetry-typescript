@@ -4,6 +4,11 @@ on:
   push:
     tags:
       - 'v*.*.*'
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -16,6 +21,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.version || github.ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -27,7 +34,7 @@ jobs:
       - name: Extract version
         id: extract
         run: |
-          TAG=${GITHUB_REF#refs/tags/}
+          TAG=${{ inputs.version || github.ref_name }}
           VERSION=${TAG#v}
           VERSION_EXTRAS=$([[ "$VERSION" == *-* ]] && echo ${VERSION#*-})
           VERSION_TAG=${VERSION_EXTRAS%%.*}
