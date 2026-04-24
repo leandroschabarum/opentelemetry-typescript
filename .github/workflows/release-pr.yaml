@@ -1,0 +1,39 @@
+name: Release PR
+
+on:
+  create:
+
+jobs:
+  create-pr:
+    name: Create Pull Request
+    if: github.event.ref_type == 'branch' && startsWith(github.event.ref, 'release/')
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract version from branch name
+        id: extract
+        run: |
+          BRANCH_NAME="${{ github.event.ref }}"
+          VERSION="v${BRANCH_NAME#release/}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.extract.outputs.version }}
+        run: |
+          exists=$(gh pr list --head "$GITHUB_REF_NAME" --base master --json number --jq '.[0].number')
+          if [ -z "$exists" ]; then
+            gh pr create \
+              --title "Release $VERSION" \
+              --body "" \
+              --base master \
+              --head "$GITHUB_REF_NAME"
+          else
+            echo "PR #${exists} already exists"
+          fi

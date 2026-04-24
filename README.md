@@ -1,5 +1,5 @@
-# opentelemetry-lgtm
-Boilerplate for OpenTelemetry instrumentation with the LGTM observability stack.
+# opentelemetry-typescript
+Boilerplate for OpenTelemetry instrumentation.
 ----
 
 ## Getting started:
@@ -14,7 +14,7 @@ npm install @opentelemetry/exporter-metrics-otlp-http @opentelemetry/exporter-tr
 
 ```javascript
 // ./instrumentation.js
-const OpenTelemetry = require('@lndr/opentelemetry-lgtm');
+const OpenTelemetry = require('@lndr/opentelemetry-typescript');
 const { OTLPMetricExporter } = require('@opentelemetry/exporter-metrics-otlp-http');
 const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-http');
 const { OTLPLogExporter } = require('@opentelemetry/exporter-logs-otlp-http');
@@ -55,7 +55,7 @@ If you need instructions for configuring your deployment, refer to the examples 
 
 ## Notice
 
-This project, **opentelemetry-lgtm**, makes use of the [OpenTelemetry](https://opentelemetry.io) packages published under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+This project, **opentelemetry-typescript**, makes use of the [OpenTelemetry](https://opentelemetry.io) packages published under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
 This package itself is licensed under the [MIT license](./LICENSE).
 
