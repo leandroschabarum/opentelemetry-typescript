@@ -29,11 +29,11 @@ jobs:
         run: |
           exists=$(gh pr list --head "$GITHUB_REF_NAME" --base master --json number --jq '.[0].number')
           if [ -z "$exists" ]; then
-            gh pr create \
-              --title "Release $VERSION" \
-              --body "" \
-              --base master \
-              --head "$GITHUB_REF_NAME"
+            gh api repos/${{ github.repository }}/pulls \
+              -f title="Release $VERSION" \
+              -f body="" \
+              -f base=master \
+              -f head="$GITHUB_REF_NAME"
           else
             echo "PR #${exists} already exists"
           fi
