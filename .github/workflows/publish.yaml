@@ -36,7 +36,7 @@ jobs:
         run: |
           TAG=${{ inputs.version || github.ref_name }}
           VERSION=${TAG#v}
-          VERSION_EXTRAS=$([[ "$VERSION" == *-* ]] && echo ${VERSION#*-})
+          VERSION_EXTRAS=$([[ "$VERSION" == *-* ]] && echo ${VERSION#*-} || true)
           VERSION_TAG=${VERSION_EXTRAS%%.*}
           VERSION_REVISION=${VERSION_EXTRAS#*.}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
