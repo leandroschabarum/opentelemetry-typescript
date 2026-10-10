@@ -16,6 +16,7 @@ import {
 	PeriodicExportingMetricReader,
 	PushMetricExporter
 } from '@opentelemetry/sdk-metrics';
+import type { LoggerOptions } from '@opentelemetry/api-logs';
 import logger, { LogLevels, LogMethods, logs } from './logger';
 
 interface Configuration extends NodeSDKConfiguration {
@@ -53,7 +54,7 @@ function sdk<T extends Configuration>(
 
 	const log = logs.getLogger(name, version, {
 		includeTraceContext: true
-	});
+	} as LoggerOptions);
 
 	for (const level of Object.values(LogMethods)) {
 		const original = console?.[level];
